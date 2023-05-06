@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1039643665699",
+    "project_id": "moressang-cb29b",
+    "storage_bucket": "moressang-cb29b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039643665699:android:2bb36b7249bb6253a8d896",
+        "android_client_info": {
+          "package_name": "com.moressang.moressang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039643665699-a00s20aeih7u00sl4nsr4he40ldtb1uq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf5aR9TnC0Rb_4s_EUZWYfCuuQnjLwnJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039643665699-a00s20aeih7u00sl4nsr4he40ldtb1uq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
