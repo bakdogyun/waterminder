@@ -3,6 +3,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../api/userData.dart';
 
 class HomeMain extends StatefulWidget {
   const HomeMain({super.key});
@@ -12,6 +14,7 @@ class HomeMain extends StatefulWidget {
 }
 
 class _HomeMainState extends State<HomeMain> {
+  String userName = '';
   double nowWater = 0.0;
   double goalWater = 1000.0;
   double estimatedWater = 1500.0;
