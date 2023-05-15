@@ -1,31 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:moressang/provider.dart';
+import 'package:provider/provider.dart';
 
 class DataMain extends StatelessWidget {
   DataMain({super.key});
   var todayDay = DateTime.now().day;
   var todayMonth = DateTime.now().month;
 
-  List<Map> sampleData = [
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-    {"amount": "400", "type": "water", "time": "2023-04-23 12:27"},
-  ];
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -62,15 +45,13 @@ class DataMain extends StatelessWidget {
         body: TabBarView(
           children: [
             ListView.builder(
-                itemCount: sampleData.length,
+                itemCount: context.watch<UserState>().userWaterRecord.length,
                 itemBuilder: (context, index) {
-                  print(index);
-                  var item = sampleData![index];
-                  print(item);
+                  var item = context.watch<UserState>().userWaterRecord[index];
                   return waterList(
                       type: item['type'],
-                      amount: item['amount'],
-                      time: item['time']);
+                      amount: item['amount'].toString(),
+                      time: item['date']);
                 }),
             Center(child: Text('gaha')),
             Center(child: Text('gaha')),
@@ -81,7 +62,10 @@ class DataMain extends StatelessWidget {
   }
 
   GestureDetector waterList(
-      {required String type, required String amount, required String time}) {
+      {required String type, required String amount, required Timestamp time}) {
+    DateTime times = time.toDate();
+    var hour = times.hour;
+    var minute = times.minute;
     return GestureDetector(
       onTap: () {
         print('hi');
@@ -134,7 +118,7 @@ class DataMain extends StatelessWidget {
                       height: 60,
                       alignment: Alignment.bottomRight,
                       child: Text(
-                        '$time',
+                        '$hour:$minute',
                         style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,

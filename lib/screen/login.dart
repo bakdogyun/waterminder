@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../firebase_options.dart';
+import 'package:moressang/provider.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key, required this.checkSignIn});
-
-  final checkSignIn;
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    widget.checkSignIn();
+    context.read<UserState>().setLogIn();
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }

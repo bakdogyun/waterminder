@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:moressang/provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingMain extends StatelessWidget {
   const SettingMain({super.key});
@@ -17,7 +19,7 @@ class SettingMain extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () {
-                FirebaseAuth.instance.signOut();
+                context.read<UserState>().setLogOut();
               },
               child: Text('logout'))
         ],

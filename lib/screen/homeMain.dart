@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:moressang/provider.dart';
+import 'package:provider/provider.dart';
 import '../api/userData.dart';
 
 class HomeMain extends StatefulWidget {
@@ -22,6 +24,7 @@ class _HomeMainState extends State<HomeMain> {
 
   double nowWaterPercent = 0.0;
   double remainWaterPercent = 100.0;
+  UserData? userData;
 
   Map<String, double> waterPercent = {
     'remain': 100.0,
@@ -29,9 +32,10 @@ class _HomeMainState extends State<HomeMain> {
   };
 
   @override
-  void initState() {
+  initState() {
     // TODO: implement initState
     super.initState();
+    context.read<UserState>().setUserRecord();
   }
 
   void pressWaterBtn() {
@@ -160,8 +164,7 @@ class _HomeMainState extends State<HomeMain> {
 
   void addWater(double water) {
     setState(() {
-      nowWater = nowWater + water;
-      nowWaterPercent = 100 * nowWater / goalWater;
+      context.read<UserState>().putUserRecord('water', water);
       if (nowWater <= goalWater) {
         waterPercent['now'] = nowWaterPercent;
         waterPercent['remain'] = 100 - nowWaterPercent;
@@ -174,6 +177,18 @@ class _HomeMainState extends State<HomeMain> {
 
   @override
   Widget build(BuildContext context) {
+    var todayDay = DateTime.now().day;
+    var todayMonth = DateTime.now().month;
+
+    nowWater = context.watch<UserState>().currentWater;
+    nowWaterPercent = 100 * nowWater / goalWater;
+    if (nowWater <= goalWater) {
+      waterPercent['now'] = nowWaterPercent;
+      waterPercent['remain'] = 100 - nowWaterPercent;
+    } else if (nowWater >= goalWater) {
+      waterPercent['now'] = 100;
+      waterPercent['remain'] = 0;
+    }
     return Scaffold(
         body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -206,7 +221,7 @@ class _HomeMainState extends State<HomeMain> {
                     padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
                     height: 50,
                     alignment: Alignment.centerRight,
-                    child: Text('4월 2일',
+                    child: Text('$todayMonth월 $todayDay일',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 25,
@@ -249,13 +264,13 @@ class _HomeMainState extends State<HomeMain> {
         Expanded(
             flex: 1,
             child: Center(
-                child: Container(
-              child: Text(
+              child: Container(
+                  child: Text(
                 '지금까지 \n $nowWater ml 섭취',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              ),
-            ))),
+              )),
+            )),
         Expanded(
             flex: 1,
             child: Column(

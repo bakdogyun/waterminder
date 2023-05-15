@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:moressang/provider.dart';
 import 'package:moressang/screen/dataMain.dart';
 import 'package:moressang/screen/homeMain.dart';
 import 'package:moressang/screen/insightMain.dart';
@@ -9,14 +11,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'api/userData.dart';
+import 'provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => UserState())],
+      child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -42,7 +46,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class Base extends StatefulWidget {
-  const Base({super.key});
+  Base({super.key});
 
   @override
   State<Base> createState() => _BaseState();
@@ -53,29 +57,14 @@ class _BaseState extends State<Base> {
   final firestore = FirebaseFirestore.instance;
   bool isUser = false;
 
-  getData() async {
-    await firestore.collection('test').get().then(
-      (querySnapshot) {
-        for (var snapshot in querySnapshot.docs) {
-          print(snapshot.data());
-        }
-      },
-    );
-  }
-
+  /*
   void checkSignIn() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        setState(() {
-          isUser = false;
-        });
-      } else {
-        setState(() {
-          isUser = true;
-        });
-      }
+      } else {}
     });
   }
+  */
 
   void handleNav(int index) {
     setState(() {
@@ -85,12 +74,10 @@ class _BaseState extends State<Base> {
 
   @override
   void initState() {
-    getData();
-    checkSignIn();
-    UserData userData = UserData();
-    userData.setUserDoc();
-    // TODO: implement initState
     super.initState();
+
+    context.read<UserState>().setLogIn();
+    // TODO: implement initState
   }
 
   final List<Widget> nowMenu = [
@@ -102,6 +89,8 @@ class _BaseState extends State<Base> {
 
   @override
   Widget build(BuildContext context) {
+    isUser = context.watch<UserState>().isLoged;
+    print(isUser);
     return isUser
         ? Scaffold(
             body: nowMenu[currentIndex],
@@ -124,6 +113,6 @@ class _BaseState extends State<Base> {
               type: BottomNavigationBarType.fixed,
             ),
           )
-        : Login(checkSignIn: checkSignIn);
+        : Login();
   }
 }
