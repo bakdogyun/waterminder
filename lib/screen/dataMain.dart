@@ -4,10 +4,72 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:moressang/provider.dart';
 import 'package:provider/provider.dart';
 
-class DataMain extends StatelessWidget {
+class DataMain extends StatefulWidget {
   DataMain({super.key});
-  var todayDay = DateTime.now().day;
-  var todayMonth = DateTime.now().month;
+
+  @override
+  State<DataMain> createState() => _DataMainState();
+}
+
+class _DataMainState extends State<DataMain> {
+  var today = DateTime.now();
+
+  var todayDate;
+  var previousCurrentDay;
+  var currentDate;
+  var currentMonth;
+  var previousNextDay;
+  var nextCurrentDay;
+  var nextNextDay;
+  var recordList;
+
+  void clickPrevios() async {
+    previousNextDay = previousCurrentDay;
+    previousCurrentDay = previousCurrentDay.subtract(Duration(days: 1));
+    currentDate = previousCurrentDay.day;
+    currentMonth = previousCurrentDay.month;
+    await context
+        .read<UserState>()
+        .getUserDayRecord(previousCurrentDay, previousNextDay);
+    setState(() {
+      recordList = {};
+
+      recordList = context.read<UserState>().userDayWaterRecord;
+      nextNextDay = previousNextDay;
+    });
+  }
+
+  void clickNext() async {
+    recordList = {};
+    nextCurrentDay = nextNextDay;
+    nextNextDay = nextCurrentDay.add(Duration(days: 1));
+    currentDate = nextCurrentDay.day;
+    currentMonth = nextCurrentDay.month;
+    await context
+        .read<UserState>()
+        .getUserDayRecord(nextCurrentDay, nextNextDay);
+    setState(() {
+      recordList = context.read<UserState>().userDayWaterRecord;
+      previousCurrentDay = nextCurrentDay;
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    todayDate = today.subtract(Duration(
+        hours: today.hour,
+        minutes: today.minute,
+        seconds: today.second,
+        microseconds: today.microsecond,
+        milliseconds: today.millisecond));
+    previousCurrentDay = todayDate;
+    nextCurrentDay = todayDate;
+    currentDate = previousCurrentDay.day;
+    currentMonth = previousCurrentDay.month;
+    nextNextDay = previousCurrentDay.add(Duration(days: 1));
+    recordList = context.read<UserState>().userWaterRecord;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +80,33 @@ class DataMain extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 80,
           backgroundColor: Colors.blueAccent,
-          title: Column(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                '수분 섭취기록',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              IconButton(
+                  onPressed: () {
+                    clickPrevios();
+                  },
+                  icon: Icon(Icons.arrow_circle_left)),
+              Column(
+                children: [
+                  Text(
+                    '수분 섭취기록',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                  ),
+                  Text(
+                    '$currentMonth월 $currentDate일',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
+                  )
+                ],
               ),
-              Text(
-                '$todayMonth월 $todayDay일',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
-              )
+              IconButton(
+                  onPressed: () {
+                    clickNext();
+                  },
+                  icon: Icon(Icons.arrow_circle_right))
             ],
           ),
           bottom: TabBar(
@@ -45,13 +122,15 @@ class DataMain extends StatelessWidget {
         body: TabBarView(
           children: [
             ListView.builder(
-                itemCount: context.watch<UserState>().userWaterRecord.length,
+                itemCount: recordList.length,
                 itemBuilder: (context, index) {
-                  var item = context.watch<UserState>().userWaterRecord[index];
-                  return waterList(
-                      type: item['type'],
-                      amount: item['amount'].toString(),
-                      time: item['date']);
+                  if (recordList != null) {
+                    var item = recordList[index];
+                    return waterList(
+                        type: item['type'],
+                        amount: item['amount'].toString(),
+                        time: item['date']);
+                  }
                 }),
             Center(child: Text('gaha')),
             Center(child: Text('gaha')),

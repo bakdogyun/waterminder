@@ -15,6 +15,8 @@ class UserData {
   double testWater = 0.0;
   Set userWaterRecord = {};
   Set userWaterTime = {};
+  Set userDayWaterRecord = {};
+  Set userDayWaterTime = {};
 
   UserData() {
     user = FirebaseAuth.instance.currentUser;
@@ -70,5 +72,31 @@ class UserData {
       );
     });
     return userWaterRecord;
+  }
+
+  Future<Set> getUserDayRecord(var startDay, var nextDay) async {
+    userDayWaterRecord = {};
+    await userRef
+        .collection('data')
+        .where('date', isLessThan: nextDay)
+        .where('date', isGreaterThan: startDay)
+        .orderBy('date')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      if (snapshot != null) {
+        snapshot.docs.forEach(
+          (doc) {
+            var data = doc.data() as Map<String, dynamic>;
+            userDayWaterRecord.add(data);
+            print(data['date'].toDate());
+            userDayWaterTime.add(data['date']);
+          },
+        );
+      } else {
+        userDayWaterRecord = {};
+      }
+    });
+    print(userDayWaterRecord);
+    return userDayWaterRecord;
   }
 }

@@ -7,6 +7,7 @@ class UserState with ChangeNotifier {
   UserData user = new UserData();
   double currentWater = 0.0;
   List userWaterRecord = [];
+  List userDayWaterRecord = [];
   bool isLoged = false;
 
   Future<void> putUserRecord(String type, double amount) async {
@@ -21,6 +22,12 @@ class UserState with ChangeNotifier {
     Set temp = await user.getUserTodayRecord();
     userWaterRecord = temp.toList();
     currentWater = user.currentWater;
+    notifyListeners();
+  }
+
+  Future<void> getUserDayRecord(var startDay, var nextDay) async {
+    Set temp = await user.getUserDayRecord(startDay, nextDay);
+    userDayWaterRecord = temp.toList();
     notifyListeners();
   }
 
