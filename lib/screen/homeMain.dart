@@ -25,17 +25,27 @@ class _HomeMainState extends State<HomeMain> {
   double nowWaterPercent = 0.0;
   double remainWaterPercent = 100.0;
   UserData? userData;
+  var _type;
 
   Map<String, double> waterPercent = {
     'remain': 100.0,
     'now': 0.0,
   };
 
+  List<String> beverageList = ['water', 'coke', 'beer', 'juice'];
+
   @override
   initState() {
     // TODO: implement initState
     super.initState();
     context.read<UserState>().setUserRecord();
+    _type = beverageList.first;
+  }
+
+  void setType(value) {
+    setState(() {
+      typedWater = double.tryParse(value)!;
+    });
   }
 
   void pressWaterBtn() {
@@ -45,126 +55,112 @@ class _HomeMainState extends State<HomeMain> {
         barrierColor: Color.fromRGBO(2, 2, 2, 0.2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         builder: (BuildContext context) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(15, 30, 15, 15),
-              alignment: Alignment.center,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      '직접 입력하기',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w800, fontSize: 30),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: TextField(
-                        keyboardType: TextInputType.number,
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter bottomState) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: Container(
+                margin: EdgeInsets.fromLTRB(15, 30, 15, 15),
+                alignment: Alignment.center,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '직접 입력하기',
                         textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(), labelText: "섭취량 입력"),
-                        onChanged: (value) {
-                          setState(() {
-                            typedWater = double.tryParse(value)!;
-                          });
-                        },
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 30),
                       ),
-                    ),
-                    SizedBox(
-                      width: 120,
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Icon(Icons.access_alarm_sharp,
-                              color: Colors.white),
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(20),
-                            backgroundColor: Colors.blue, // <-- Button color
-                            foregroundColor: Colors.red, // <-- Splash color
-                          ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "섭취량 입력"),
+                          onChanged: (value) {
+                            bottomState(() {
+                              setState(() {
+                                typedWater = double.tryParse(value)!;
+                              });
+                            });
+                          },
                         ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Icon(Icons.access_alarm_sharp,
-                              color: Colors.white),
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(20),
-                            backgroundColor: Colors.blue, // <-- Button color
-                            foregroundColor: Colors.red, // <-- Splash color
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Icon(Icons.access_alarm_sharp,
-                              color: Colors.white),
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(20),
-                            backgroundColor: Colors.blue, // <-- Button color
-                            foregroundColor: Colors.red, // <-- Splash color
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 120,
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        OutlinedButton(
-                            style: ButtonStyle(
-                              foregroundColor:
-                                  MaterialStateProperty.all(Colors.red),
-                              textStyle: MaterialStateProperty.all(TextStyle(
-                                  fontWeight: FontWeight.w900, fontSize: 16)),
-                              fixedSize:
-                                  MaterialStateProperty.all(Size(100, 40)),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('닫기')),
-                        Container(
-                          width: 80,
-                        ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.blueAccent),
+                      ),
+                      SizedBox(
+                        width: 120,
+                        height: 30,
+                      ),
+                      DropdownButton(
+                          value: _type,
+                          items: beverageList.map((doc) {
+                            print(beverageList.indexOf(doc));
+                            return DropdownMenuItem(
+                              value: doc,
+                              child: Text(doc),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            bottomState(() {
+                              setState(() {
+                                _type = value;
+                              });
+                            });
+                          }),
+                      SizedBox(
+                        width: 120,
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          OutlinedButton(
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.red),
                                 textStyle: MaterialStateProperty.all(TextStyle(
                                     fontWeight: FontWeight.w900, fontSize: 16)),
                                 fixedSize:
-                                    MaterialStateProperty.all(Size(100, 40))),
-                            onPressed: () {
-                              addWater(typedWater);
-                              Navigator.pop(context);
-                            },
-                            child: Text('추가하기'))
-                      ],
-                    )
-                  ]),
-            ),
-          );
+                                    MaterialStateProperty.all(Size(100, 40)),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('닫기')),
+                          Container(
+                            width: 80,
+                          ),
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.blueAccent),
+                                  textStyle: MaterialStateProperty.all(
+                                      TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 16)),
+                                  fixedSize:
+                                      MaterialStateProperty.all(Size(100, 40))),
+                              onPressed: () {
+                                addWater(_type, typedWater);
+                                Navigator.pop(context);
+                              },
+                              child: Text('추가하기'))
+                        ],
+                      )
+                    ]),
+              ),
+            );
+          });
         });
   }
 
-  void addWater(double water) {
+  void addWater(String type, double water) {
     setState(() {
-      context.read<UserState>().putUserRecord('water', water);
+      context.read<UserState>().putUserRecord(type, water);
       if (nowWater <= goalWater) {
         waterPercent['now'] = nowWaterPercent;
         waterPercent['remain'] = 100 - nowWaterPercent;
@@ -280,7 +276,10 @@ class _HomeMainState extends State<HomeMain> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                       ElevatedButton(
-                          onPressed: pressWaterBtn, child: Text('직접입력')),
+                          onPressed: () {
+                            pressWaterBtn();
+                          },
+                          child: Text('직접입력')),
                       SizedBox(
                         width: 20,
                       ),
