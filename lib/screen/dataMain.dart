@@ -75,7 +75,7 @@ class _DataMainState extends State<DataMain> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 80,
@@ -115,7 +115,6 @@ class _DataMainState extends State<DataMain> {
               labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               tabs: [
                 Tab(text: '일별'),
-                Tab(text: '주별'),
                 Tab(text: '월별'),
               ]),
         ),
@@ -132,7 +131,6 @@ class _DataMainState extends State<DataMain> {
                         time: item['date']);
                   }
                 }),
-            Center(child: Text('gaha')),
             Center(child: Text('gaha')),
           ],
         ),

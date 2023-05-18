@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'api/userData.dart';
+import 'api/waterData.dart';
 import 'provider.dart';
 
 void main() async {
@@ -18,9 +19,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserState())],
-      child: MyApp()));
+
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => UserState()),
+    ChangeNotifierProvider(create: (context) => WaterState())
+  ], child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {

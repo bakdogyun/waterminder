@@ -22,10 +22,17 @@ class _HomeMainState extends State<HomeMain> {
   double estimatedWater = 1500.0;
   double typedWater = 0;
 
+  var _value;
+  var selectedCompany;
+  var listCompany;
+
   double nowWaterPercent = 0.0;
   double remainWaterPercent = 100.0;
   UserData? userData;
   var _type;
+
+  List company = [];
+  List companyBeverageList = [];
 
   Map<String, double> waterPercent = {
     'remain': 100.0,
@@ -39,7 +46,23 @@ class _HomeMainState extends State<HomeMain> {
     // TODO: implement initState
     super.initState();
     context.read<UserState>().setUserRecord();
+    context.read<WaterState>().getCompanyList();
+
     _type = beverageList.first;
+  }
+
+  Future<void> getList() async {
+    companyBeverageList = [];
+    await context.read<WaterState>().getCompanyBeverageList(selectedCompany);
+    setState(() {
+      companyBeverageList = context.read<WaterState>().companyBeverageList;
+      if (companyBeverageList.length > 1) {
+        listCompany = companyBeverageList[0];
+        companyBeverageList = companyBeverageList.sublist(1);
+      } else {
+        companyBeverageList = [];
+      }
+    });
   }
 
   void setType(value) {
@@ -151,6 +174,136 @@ class _HomeMainState extends State<HomeMain> {
                               child: Text('추가하기'))
                         ],
                       )
+                    ]),
+              ),
+            );
+          });
+        });
+  }
+
+  void pressTemplateBtn() {
+    company = context.read<WaterState>().companyName;
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        barrierColor: Color.fromRGBO(2, 2, 2, 0.2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter bottomState) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: Container(
+                margin: EdgeInsets.fromLTRB(15, 30, 15, 15),
+                alignment: Alignment.center,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '음료 검색하기',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 30),
+                      ),
+                      Container(
+                        height: 50,
+                        margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
+                        child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: List<Widget>.generate(company.length,
+                                (int index) {
+                              var label = company[index];
+                              return Container(
+                                  padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                                  child: ChoiceChip(
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    selectedColor: Colors.blueAccent,
+                                    backgroundColor: Colors.grey,
+                                    label: Text(label),
+                                    selected: _value == label,
+                                    onSelected: (bool selected) async {
+                                      _value = label;
+                                      selectedCompany = label;
+                                      await getList();
+                                      bottomState(() {
+                                        setState() {
+                                          companyBeverageList =
+                                              companyBeverageList;
+                                        }
+                                      });
+                                      print(companyBeverageList);
+                                    },
+                                  ));
+                            }).toList()),
+                      ),
+                      StatefulBuilder(builder:
+                          (BuildContext context, StateSetter bottomState) {
+                        return Container(
+                            height: 400,
+                            child: ListView.separated(
+                              itemCount: companyBeverageList.length,
+                              itemBuilder: (context, index) {
+                                print(companyBeverageList);
+                                var label = companyBeverageList[index]['name'];
+                                var amount =
+                                    companyBeverageList[index]['amount'];
+                                var type = companyBeverageList[index]['type'];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    print('hi');
+                                    print(type);
+                                    double temp = amount.toDouble();
+                                    addWater(type, temp);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.all(10),
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.ac_unit,
+                                            size: 80,
+                                            color: Colors.blueGrey,
+                                          ),
+                                          Text('$label',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: Colors.lightBlue)),
+                                          Text('$amount',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.grey))
+                                        ]),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  width: 40,
+                                );
+                              },
+                            ));
+                      }),
+                      OutlinedButton(
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.red),
+                            textStyle: MaterialStateProperty.all(TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 16)),
+                            fixedSize: MaterialStateProperty.all(Size(100, 40)),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('닫기'))
                     ]),
               ),
             );
@@ -285,7 +438,7 @@ class _HomeMainState extends State<HomeMain> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            print('hi');
+                            pressTemplateBtn();
                           },
                           child: Text('찾아보기'))
                     ]))

@@ -2,6 +2,25 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:moressang/api/userData.dart';
+import 'package:moressang/api/waterData.dart';
+
+class WaterState with ChangeNotifier {
+  List companyName = [];
+  List companyBeverageList = [];
+  WaterData data = new WaterData();
+
+  Future<void> getCompanyList() async {
+    Set temp = await data.getCompanyName();
+    companyName = temp.toList();
+    notifyListeners();
+  }
+
+  Future<void> getCompanyBeverageList(String company) async {
+    Set temp = await data.getCompanyBeverage(company);
+    companyBeverageList = temp.toList();
+    notifyListeners();
+  }
+}
 
 class UserState with ChangeNotifier {
   UserData user = new UserData();
