@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "1039643665699-a00s20aeih7u00sl4nsr4he40ldtb1uq.apps.googleusercontent.com",
+          "client_id": "1039643665699-l3auo49o9bc9j2rao8f1ind93sqgnd0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moressang.moressang",
+            "certificate_hash": "eaf0e89d7d3a3cc4c9d65b58d0f14a8c098d0dea"
+          }
+        },
+        {
+          "client_id": "1039643665699-9ncvru6jlbeahrahc3pj9uk2optk3m4v.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +35,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1039643665699-a00s20aeih7u00sl4nsr4he40ldtb1uq.apps.googleusercontent.com",
+              "client_id": "1039643665699-9ncvru6jlbeahrahc3pj9uk2optk3m4v.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1039643665699-eebjrdr8b9qaib28m62qh2kkc9n5qv2d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.moressang.moressang"
+              }
             }
           ]
         }

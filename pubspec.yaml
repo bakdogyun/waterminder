@@ -41,6 +41,7 @@ dependencies:
   google_sign_in: ^6.1.0
   flutter_provider: ^2.1.0
   provider: ^6.0.5
+  flutter_local_notifications: ^14.1.0
 
 dev_dependencies:
   flutter_test:

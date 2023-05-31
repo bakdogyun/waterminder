@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:moressang/provider.dart';
 import 'package:moressang/screen/dataMain.dart';
@@ -13,6 +14,7 @@ import 'firebase_options.dart';
 import 'api/userData.dart';
 import 'api/waterData.dart';
 import 'provider.dart';
+import 'package:moressang/notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +80,10 @@ class _BaseState extends State<Base> {
   @override
   void initState() {
     super.initState();
+    NotificationClass.init();
 
+    Future.delayed(const Duration(seconds: 3),
+        NotificationClass.requestNotificationPermissino());
     context.read<UserState>().setLogIn();
     // TODO: implement initState
   }

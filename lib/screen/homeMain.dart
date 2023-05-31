@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moressang/provider.dart';
 import 'package:provider/provider.dart';
 import '../api/userData.dart';
+import 'package:moressang/notification.dart';
 
 class HomeMain extends StatefulWidget {
   const HomeMain({super.key});
@@ -59,6 +60,7 @@ class _HomeMainState extends State<HomeMain> {
       if (companyBeverageList.length > 1) {
         listCompany = companyBeverageList[0];
         companyBeverageList = companyBeverageList.sublist(1);
+        print(companyBeverageList);
       } else {
         companyBeverageList = [];
       }
@@ -440,7 +442,12 @@ class _HomeMainState extends State<HomeMain> {
                           onPressed: () {
                             pressTemplateBtn();
                           },
-                          child: Text('찾아보기'))
+                          child: Text('찾아보기')),
+                      ElevatedButton(
+                          onPressed: () {
+                            NotificationClass.showNotification('test', '실화?');
+                          },
+                          child: Text('알람'))
                     ]))
               ],
             )),

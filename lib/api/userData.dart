@@ -74,6 +74,25 @@ class UserData {
     return userWaterRecord;
   }
 
+  Future<void> getUserMonthRecord() async {
+    var date = DateTime.now();
+    var newDate = new DateTime(date.year, date.month - 2, date.day);
+    var firstMonth = newDate.subtract(Duration(days: newDate.day - 1));
+    var nextMonth =
+        new DateTime(firstMonth.year, firstMonth.month + 1, firstMonth.day);
+    await userRef
+        .collection('data')
+        .where('date', isLessThan: firstMonth)
+        .where('date', isGreaterThan: nextMonth)
+        .orderBy('date')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((element) {
+        print(element);
+      });
+    });
+  }
+
   Future<Set> getUserDayRecord(var startDay, var nextDay) async {
     userDayWaterRecord = {};
     await userRef

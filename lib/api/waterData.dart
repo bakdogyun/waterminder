@@ -46,15 +46,16 @@ class WaterData {
       for (var docSnapshot in data.docs) {
         if (docSnapshot.exists) {
           var docs = docSnapshot.data() as Map<String, dynamic>;
+          print(docs['type']);
           companyBeverageList.add({
             'name': docs['name'],
             'amount': docs['amount'],
             'type': docs['type']
           });
-
-          return companyBeverageList;
         }
       }
+      print(companyBeverageList);
+      return companyBeverageList;
     });
 
     return companyBeverageList;
