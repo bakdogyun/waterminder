@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:moressang/screen/setUser.dart';
 import 'package:provider/provider.dart';
 import 'package:moressang/provider.dart';
 import 'package:moressang/screen/dataMain.dart';
@@ -61,6 +62,7 @@ class _BaseState extends State<Base> {
   int currentIndex = 0;
   final firestore = FirebaseFirestore.instance;
   bool isUser = false;
+  bool isSet = false;
 
   /*
   void checkSignIn() {
@@ -81,10 +83,10 @@ class _BaseState extends State<Base> {
   void initState() {
     super.initState();
     NotificationClass.init();
-
     Future.delayed(const Duration(seconds: 3),
         NotificationClass.requestNotificationPermissino());
     context.read<UserState>().setLogIn();
+    context.read<UserState>().setUser();
     // TODO: implement initState
   }
 
@@ -98,29 +100,33 @@ class _BaseState extends State<Base> {
   @override
   Widget build(BuildContext context) {
     isUser = context.watch<UserState>().isLoged;
+    isSet = context.watch<UserState>().isSet;
     print(isUser);
     return isUser
-        ? Scaffold(
-            body: nowMenu[currentIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: Colors.blueAccent,
-              selectedLabelStyle:
-                  TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-              onTap: handleNav,
-              items: [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.file_copy_outlined), label: "Record"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.insights), label: "Insight"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: "Setting"),
-              ],
-              currentIndex: currentIndex,
-              unselectedItemColor: Colors.blueGrey,
-              type: BottomNavigationBarType.fixed,
-            ),
-          )
+        ? isSet
+            ? Scaffold(
+                body: nowMenu[currentIndex],
+                bottomNavigationBar: BottomNavigationBar(
+                  selectedItemColor: Colors.blueAccent,
+                  selectedLabelStyle:
+                      TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  onTap: handleNav,
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.home), label: "Home"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.file_copy_outlined), label: "Record"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.insights), label: "Insight"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.person), label: "Setting"),
+                  ],
+                  currentIndex: currentIndex,
+                  unselectedItemColor: Colors.blueGrey,
+                  type: BottomNavigationBarType.fixed,
+                ),
+              )
+            : SetUser()
         : Login();
   }
 }

@@ -18,6 +18,7 @@ class UserData {
   Set userDayWaterRecord = {};
   Set userDayWaterTime = {};
   Set userAllData = {};
+  bool isSet = false;
 
   UserData() {
     user = FirebaseAuth.instance.currentUser;
@@ -34,6 +35,28 @@ class UserData {
         await userRef.set({"name": userName, "isSet": false});
       }
     });
+  }
+
+  Future<bool> getUserState() async {
+    await userRef.get().then((DocumentSnapshot data) async {
+      final datas = data.data() as Map<String, dynamic>;
+      isSet = datas['isSet'];
+    });
+
+    return isSet;
+  }
+
+  Future<bool> setUserState(String gender, int activity, int weight) async {
+    isSet = true;
+    await userRef.set({
+      'name': userName,
+      'isSet': isSet,
+      'gender': gender,
+      'activity': activity,
+      'weight': weight
+    });
+
+    return isSet;
   }
 
   Future<void> putWaterData(String type, double amount) async {

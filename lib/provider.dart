@@ -30,6 +30,7 @@ class UserState with ChangeNotifier {
   bool isLoged = false;
   Map fiveRecord = {};
   List userAllRecord = [];
+  bool isSet = false;
 
   Future<void> putUserRecord(String type, double amount) async {
     await user.putWaterData(type, amount);
@@ -39,10 +40,21 @@ class UserState with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setUserState(String gender, int activity, int weight) async {
+    await user.setUserState(gender, activity, weight);
+    isSet = true;
+    notifyListeners();
+  }
+
   Future<void> setUserRecord() async {
     Set temp = await user.getUserTodayRecord();
     userWaterRecord = temp.toList();
     currentWater = user.currentWater;
+    notifyListeners();
+  }
+
+  Future<void> setUser() async {
+    isSet = await user.getUserState();
     notifyListeners();
   }
 
