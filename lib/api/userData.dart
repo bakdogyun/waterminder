@@ -17,6 +17,7 @@ class UserData {
   Set userWaterTime = {};
   Set userDayWaterRecord = {};
   Set userDayWaterTime = {};
+  Set userAllData = {};
 
   UserData() {
     user = FirebaseAuth.instance.currentUser;
@@ -30,7 +31,7 @@ class UserData {
       final datas = data.data();
       if (datas != null) {
       } else {
-        await userRef.set({"name": userName});
+        await userRef.set({"name": userName, "isSet": false});
       }
     });
   }
@@ -115,7 +116,55 @@ class UserData {
         userDayWaterRecord = {};
       }
     });
-    print(userDayWaterRecord);
     return userDayWaterRecord;
+  }
+
+  Future<Map> getUserFiveRecord(var startDay, var endDay) async {
+    Map userFiveDay = {};
+    var now = DateTime.now();
+
+    for (var i = 0; i < 5; i++) {
+      var day = now.subtract(Duration(days: i)).day;
+      userFiveDay[day] = 0;
+    }
+
+    await userRef
+        .collection('data')
+        .where('date', isLessThan: endDay)
+        .where('date', isGreaterThan: startDay)
+        .orderBy('date')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      if (snapshot != null) {
+        snapshot.docs.forEach((doc) {
+          var data = doc.data() as Map<String, dynamic>;
+          var date = data['date'].toDate().day;
+          var temp;
+          if (userFiveDay[date] != null) {
+            temp = userFiveDay[date];
+          } else {
+            temp = 0;
+          }
+          userFiveDay[date] = temp + data['amount'];
+        });
+      }
+    });
+
+    return userFiveDay;
+  }
+
+  Future<Set> getUserAllRecord() async {
+    userAllData = {};
+    await userRef
+        .collection('data')
+        .orderBy('date')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        userAllData.add(data);
+      });
+    });
+    return userAllData;
   }
 }

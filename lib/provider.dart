@@ -28,6 +28,8 @@ class UserState with ChangeNotifier {
   List userWaterRecord = [];
   List userDayWaterRecord = [];
   bool isLoged = false;
+  Map fiveRecord = {};
+  List userAllRecord = [];
 
   Future<void> putUserRecord(String type, double amount) async {
     await user.putWaterData(type, amount);
@@ -47,6 +49,18 @@ class UserState with ChangeNotifier {
   Future<void> getUserDayRecord(var startDay, var nextDay) async {
     Set temp = await user.getUserDayRecord(startDay, nextDay);
     userDayWaterRecord = temp.toList();
+    notifyListeners();
+  }
+
+  Future<void> getUserFiveRecord(var startDay, var endDay) async {
+    Map temp = await user.getUserFiveRecord(startDay, endDay);
+    fiveRecord = temp;
+    notifyListeners();
+  }
+
+  Future<void> getUserAllRecord() async {
+    Set temp = await user.getUserAllRecord();
+    userAllRecord = temp.toList();
     notifyListeners();
   }
 
