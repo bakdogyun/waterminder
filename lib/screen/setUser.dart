@@ -115,9 +115,7 @@ class _SetUserState extends State<SetUser> {
                       .setUserState(gender, activity, weight);
                 });
               },
-              child: Text('제출하기')),
-          Text('제출 시 개인정보 사용에 동의하는 것으로 간주합니다.',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10))
+              child: Text('제출하기'))
         ],
       ),
     );
