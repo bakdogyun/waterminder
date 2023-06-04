@@ -8,6 +8,7 @@ import 'package:moressang/provider.dart';
 import 'package:provider/provider.dart';
 import '../api/userData.dart';
 import 'package:moressang/notification.dart';
+import 'package:moressang/ml.dart';
 
 class HomeMain extends StatefulWidget {
   const HomeMain({super.key});
@@ -22,6 +23,10 @@ class _HomeMainState extends State<HomeMain> {
   double goalWater = 1000.0;
   double estimatedWater = 1500.0;
   double typedWater = 0;
+  double yesterday = 0.0;
+
+  late Model classifier;
+  late Model time;
 
   var _value;
   var selectedCompany;
@@ -34,6 +39,32 @@ class _HomeMainState extends State<HomeMain> {
 
   List company = [];
   List companyBeverageList = [];
+  List input = [
+    [1],
+    [0],
+    [0],
+    [0],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+    [0],
+    [1],
+    [1],
+    [0],
+    [1],
+    [1],
+    [0],
+    [1],
+    [0],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+  ];
 
   Map<String, double> waterPercent = {
     'remain': 100.0,
@@ -48,6 +79,9 @@ class _HomeMainState extends State<HomeMain> {
     super.initState();
     context.read<UserState>().setUserRecord();
     context.read<WaterState>().getCompanyList();
+    context.read<UserState>().getUserYesterdayRecord();
+    context.read<UserState>().inferAmount();
+    time = Model('time');
 
     _type = beverageList.first;
   }
@@ -324,15 +358,20 @@ class _HomeMainState extends State<HomeMain> {
         waterPercent['remain'] = 0;
       }
     });
+    if (nowWater >= goalWater) {
+      NotificationClass.showNotification('축하합니다!', '목표를 달성했습니다!');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var todayDay = DateTime.now().day;
     var todayMonth = DateTime.now().month;
-
+    goalWater = context.watch<UserState>().userGoal.roundToDouble();
     nowWater = context.watch<UserState>().currentWater;
     nowWaterPercent = 100 * nowWater / goalWater;
+    estimatedWater = context.watch<UserState>().estimatedWater.roundToDouble();
+
     if (nowWater <= goalWater) {
       waterPercent['now'] = nowWaterPercent;
       waterPercent['remain'] = 100 - nowWaterPercent;
@@ -340,6 +379,7 @@ class _HomeMainState extends State<HomeMain> {
       waterPercent['now'] = 100;
       waterPercent['remain'] = 0;
     }
+
     return Scaffold(
         body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -360,7 +400,7 @@ class _HomeMainState extends State<HomeMain> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '오늘의 목표\n400ml',
+                            '오늘의 목표\n$goalWater ml',
                             style: TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 20),
                           ),
@@ -385,7 +425,7 @@ class _HomeMainState extends State<HomeMain> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text('예측 섭취량\n1200ml',
+                  Text('예측 섭취량\n$estimatedWater',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
@@ -443,11 +483,7 @@ class _HomeMainState extends State<HomeMain> {
                             pressTemplateBtn();
                           },
                           child: Text('찾아보기')),
-                      ElevatedButton(
-                          onPressed: () {
-                            NotificationClass.showNotification('test', '실화?');
-                          },
-                          child: Text('알람'))
+                      ElevatedButton(onPressed: () {}, child: Text('알람'))
                     ]))
               ],
             )),

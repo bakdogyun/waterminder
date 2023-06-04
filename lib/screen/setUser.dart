@@ -109,10 +109,15 @@ class _SetUserState extends State<SetUser> {
           ),
           ElevatedButton(
               onPressed: () {
+                bool isSet = context.read<UserState>().isSet;
+                print(isSet);
                 setState(() {
                   context
                       .read<UserState>()
                       .setUserState(gender, activity, weight);
+                  if (isSet) {
+                    Navigator.pop(context, 'ok');
+                  }
                 });
               },
               child: Text('제출하기'))

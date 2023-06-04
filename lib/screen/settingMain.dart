@@ -6,6 +6,7 @@ import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moressang/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:moressang/screen/setUser.dart';
 
 class SettingMain extends StatelessWidget {
   const SettingMain({super.key});
@@ -21,7 +22,13 @@ class SettingMain extends StatelessWidget {
               onPressed: () {
                 context.read<UserState>().setLogOut();
               },
-              child: Text('logout'))
+              child: Text('logout')),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SetUser()));
+              },
+              child: Text('활동 변경'))
         ],
       ),
     ));

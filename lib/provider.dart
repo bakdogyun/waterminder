@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:moressang/api/userData.dart';
 import 'package:moressang/api/waterData.dart';
+import 'package:moressang/ml.dart';
 
 class WaterState with ChangeNotifier {
   List companyName = [];
@@ -24,6 +25,7 @@ class WaterState with ChangeNotifier {
 
 class UserState with ChangeNotifier {
   UserData user = new UserData();
+  Model amountModel = new Model('amount');
   double currentWater = 0.0;
   List userWaterRecord = [];
   List userDayWaterRecord = [];
@@ -31,6 +33,12 @@ class UserState with ChangeNotifier {
   Map fiveRecord = {};
   List userAllRecord = [];
   bool isSet = false;
+  double userYesterday = 0.0;
+  double estimatedWater = 0.0;
+  late int userWorkOut;
+  late int userActivity;
+  late int userWeight;
+  double userGoal = 0.0;
 
   Future<void> putUserRecord(String type, double amount) async {
     await user.putWaterData(type, amount);
@@ -43,6 +51,31 @@ class UserState with ChangeNotifier {
   Future<void> setUserState(String gender, int activity, int weight) async {
     await user.setUserState(gender, activity, weight);
     isSet = true;
+    userWorkOut = activity;
+    userWeight = weight;
+
+    double userLbs = userWeight * 2.20462 * 0.5;
+    int workOutMin = 0;
+    switch (activity) {
+      case 0:
+        workOutMin = 10;
+        break;
+      case 1:
+        workOutMin = 20;
+        break;
+      case 2:
+        workOutMin = 40;
+        break;
+      case 3:
+        workOutMin = 60;
+        break;
+      default:
+        workOutMin = 0;
+    }
+
+    userGoal = userLbs + workOutMin / 30 * 12;
+    userGoal = userGoal * 29.5735;
+    print(userGoal);
     notifyListeners();
   }
 
@@ -61,6 +94,11 @@ class UserState with ChangeNotifier {
   Future<void> getUserDayRecord(var startDay, var nextDay) async {
     Set temp = await user.getUserDayRecord(startDay, nextDay);
     userDayWaterRecord = temp.toList();
+    notifyListeners();
+  }
+
+  Future<void> getUserYesterdayRecord() async {
+    userYesterday = await user.getUserYesterdayRecord();
     notifyListeners();
   }
 
@@ -96,4 +134,12 @@ class UserState with ChangeNotifier {
     isLoged = false;
     notifyListeners();
   }
+
+  Future<void> inferAmount() async {
+    estimatedWater = await amountModel.inferAmount([userYesterday])[0][0];
+    print(estimatedWater);
+    notifyListeners();
+  }
+
+  Future<void> setUserGoal() async {}
 }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +16,8 @@ class UserData {
   Set userDayWaterRecord = {};
   Set userDayWaterTime = {};
   Set userAllData = {};
+  Set userYesterday = {};
+  double userYesterdayWater = 0.0;
   bool isSet = false;
 
   UserData() {
@@ -96,6 +96,37 @@ class UserData {
       );
     });
     return userWaterRecord;
+  }
+
+  Future<double> getUserYesterdayRecord() async {
+    var now = DateTime.now();
+    var midNight = now.subtract(Duration(
+      hours: now.hour,
+      minutes: now.minute,
+      seconds: now.second,
+      milliseconds: now.millisecond,
+      microseconds: now.microsecond,
+    ));
+    var yesterday = midNight.subtract(Duration(days: 1));
+    await userRef
+        .collection('data')
+        .where('date', isGreaterThan: midNight)
+        .where('date', isLessThan: yesterday)
+        .orderBy('date')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach(
+        (doc) {
+          var data = doc.data() as Map<String, dynamic>;
+          if (userWaterTime.contains(data['date'])) {
+          } else {
+            userYesterday.add(data);
+            userYesterdayWater = userYesterdayWater + data['amount'].toDouble();
+          }
+        },
+      );
+    });
+    return userYesterdayWater;
   }
 
   Future<void> getUserMonthRecord() async {
