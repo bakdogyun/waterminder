@@ -37,13 +37,19 @@ class UserData {
     });
   }
 
-  Future<bool> getUserState() async {
+  Future<List> getUserState() async {
+    List test = [];
     await userRef.get().then((DocumentSnapshot data) async {
       final datas = data.data() as Map<String, dynamic>;
       isSet = datas['isSet'];
+      String activity = datas['activity'].toString();
+      String weight = datas['weight'].toString();
+      test.add(isSet.toString());
+      test.add(activity);
+      test.add(weight);
     });
 
-    return isSet;
+    return test;
   }
 
   Future<bool> setUserState(String gender, int activity, int weight) async {
@@ -88,6 +94,7 @@ class UserData {
           var data = doc.data() as Map<String, dynamic>;
           if (userWaterTime.contains(data['date'])) {
           } else {
+            data['id'] = doc.id;
             userWaterRecord.add(data);
             userWaterTime.add(data['date']);
             currentWater = currentWater + data['amount'].toDouble();
@@ -161,6 +168,7 @@ class UserData {
         snapshot.docs.forEach(
           (doc) {
             var data = doc.data() as Map<String, dynamic>;
+            data['id'] = doc.id;
             userDayWaterRecord.add(data);
             print(data['date'].toDate());
             userDayWaterTime.add(data['date']);
@@ -216,9 +224,17 @@ class UserData {
         .then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((doc) {
         var data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
         userAllData.add(data);
       });
     });
     return userAllData;
+  }
+
+  Future<void> deleteRecord(String id) async {
+    await userRef.collection('data').doc(id).delete().then(
+          (doc) => print("Document deleted"),
+          onError: (e) => print("Error updating document $e"),
+        );
   }
 }

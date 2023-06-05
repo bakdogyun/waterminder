@@ -39,32 +39,6 @@ class _HomeMainState extends State<HomeMain> {
 
   List company = [];
   List companyBeverageList = [];
-  List input = [
-    [1],
-    [0],
-    [0],
-    [0],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-    [0],
-    [1],
-    [1],
-    [0],
-    [1],
-    [1],
-    [0],
-    [1],
-    [0],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-  ];
 
   Map<String, double> waterPercent = {
     'remain': 100.0,
@@ -282,7 +256,7 @@ class _HomeMainState extends State<HomeMain> {
                               itemCount: companyBeverageList.length,
                               itemBuilder: (context, index) {
                                 print(companyBeverageList);
-                                var label = companyBeverageList[index]['name'];
+                                var label = companyBeverageList[index]['type'];
                                 var amount =
                                     companyBeverageList[index]['amount'];
                                 var type = companyBeverageList[index]['type'];
@@ -425,7 +399,7 @@ class _HomeMainState extends State<HomeMain> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text('예측 섭취량\n$estimatedWater',
+                  Text('오늘의 예측 섭취량\n$estimatedWater',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),

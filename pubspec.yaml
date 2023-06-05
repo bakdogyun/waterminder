@@ -44,6 +44,7 @@ dependencies:
   flutter_local_notifications: ^14.1.0
   intl: ^0.18.1
   tflite_flutter: ^0.10.1
+  firebase_ml_model_downloader: ^0.2.3+2
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
   assets:
     - assets/amount.tflite
     - assets/times.tflite
+    - assets/test.tflite
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

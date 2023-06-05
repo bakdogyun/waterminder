@@ -1,10 +1,37 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
 
 class Model {
   final amountModel = 'assets/amount.tflite';
-  final timeModel = 'assets/times.tflite';
+  final timeModel = 'assets/test.tflite';
+  List input = [
+    [1],
+    [0],
+    [0],
+    [0],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+    [0],
+    [1],
+    [1],
+    [0],
+    [1],
+    [1],
+    [0],
+    [1],
+    [0],
+    [1],
+    [1],
+    [1],
+    [1],
+    [1],
+  ];
 
   late Interpreter interpreter;
   Model(String type) {
@@ -49,7 +76,7 @@ class Model {
 
   List inferTime(List input) {
     var output = List<double>.filled(24, 0);
-    interpreter.run(input, output);
+    //interpreter.run(input, output);
 
     return output;
   }
@@ -57,7 +84,6 @@ class Model {
   List inferAmount(List input) {
     var output = List<double>.filled(1, 1).reshape([1, 1]);
     interpreter.run(input, output);
-
     return output;
   }
 }

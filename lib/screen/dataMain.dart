@@ -22,6 +22,7 @@ class _DataMainState extends State<DataMain> {
   var nextCurrentDay;
   var nextNextDay;
   var recordList;
+  var isReLoad;
 
   void clickPrevios() async {
     previousNextDay = previousCurrentDay;
@@ -127,7 +128,8 @@ class _DataMainState extends State<DataMain> {
                     return waterList(
                         type: item['type'],
                         amount: item['amount'].toString(),
-                        time: item['date']);
+                        time: item['date'],
+                        id: item['id']);
                   }
                 }),
           ],
@@ -137,13 +139,17 @@ class _DataMainState extends State<DataMain> {
   }
 
   GestureDetector waterList(
-      {required String type, required String amount, required Timestamp time}) {
+      {required String type,
+      required String amount,
+      required Timestamp time,
+      required String id}) {
     DateTime times = time.toDate();
+
     var hour = times.hour;
     var minute = times.minute;
     return GestureDetector(
       onTap: () {
-        print('hi');
+        //context.read<UserState>().deleteRecord(id);
       },
       child: Column(
         children: [

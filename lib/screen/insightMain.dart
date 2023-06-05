@@ -15,6 +15,28 @@ class InsightMain extends StatefulWidget {
 }
 
 class _InsightMainState extends State<InsightMain> {
+  final List colorList = [
+    Color(0xFF0000FF),
+    Color(0xFF6495ED),
+    Color(0xFF4169E1),
+    Color(0xFF1E90FF),
+    Color(0xFF00BFFF),
+    Color(0xFF87CEEB),
+    Color(0xFF87CEFA),
+    Color(0xFFADD8E6),
+    Color(0xFFB0C4DE),
+    Color(0xFF4682B4),
+    Color(0xFF6A5ACD),
+    Color(0xFF7B68EE),
+    Color(0xFF4169E1),
+    Color(0xFF0000CD),
+    Color(0xFF191970),
+    Color(0xFF000080),
+    Color(0xFF00008B),
+    Color(0xFF0000FF),
+    Color(0xFF6495ED),
+    Color(0xFF4169E1)
+  ];
   final List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a)
@@ -30,6 +52,7 @@ class _InsightMainState extends State<InsightMain> {
   List<BarChartGroupData> barList = [];
   List allRecord = [];
   List<PieChartSectionData> pieList = [];
+  List<Widget> typeList = [];
 
   @override
   initState() {
@@ -64,14 +87,28 @@ class _InsightMainState extends State<InsightMain> {
     Map drinkList = {};
     allRecord.forEach((element) {
       var type = element['type'];
+      print(type);
       if (drinkList[type] == null) {
         drinkList[type] = element['amount'];
       } else {
         drinkList[type] = drinkList[type] + element['amount'];
       }
     });
+    int index = 0;
     drinkList.forEach((type, amount) {
-      pieList.add(PieChartSectionData(value: amount, showTitle: false));
+      pieList.add(PieChartSectionData(
+          value: amount, showTitle: false, color: colorList[index]));
+      typeList.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(
+          Icons.circle,
+          color: colorList[index],
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        Text('$type')
+      ]));
+      index++;
     });
   }
 
@@ -145,7 +182,7 @@ class _InsightMainState extends State<InsightMain> {
                       minX: 0,
                       maxX: 24,
                       minY: 0,
-                      maxY: 2000,
+                      maxY: 4000,
                       titlesData: FlTitlesData(
                           show: true,
                           rightTitles: AxisTitles(
@@ -248,6 +285,15 @@ class _InsightMainState extends State<InsightMain> {
                     ),
                   ],
                 ),
+              ),
+              Container(
+                width: 350,
+                decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20)),
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                padding: EdgeInsets.all(15),
+                child: Column(children: typeList),
               )
             ]),
       ),

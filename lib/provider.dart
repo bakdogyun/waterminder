@@ -39,6 +39,7 @@ class UserState with ChangeNotifier {
   late int userActivity;
   late int userWeight;
   double userGoal = 0.0;
+  bool isReLoad = false;
 
   Future<void> putUserRecord(String type, double amount) async {
     await user.putWaterData(type, amount);
@@ -87,7 +88,36 @@ class UserState with ChangeNotifier {
   }
 
   Future<void> setUser() async {
-    isSet = await user.getUserState();
+    List temp;
+    temp = await user.getUserState();
+    if (temp[0] == 'true') {
+      isSet = true;
+    }
+    userWorkOut = int.parse(temp[1]);
+    userWeight = int.parse(temp[2]);
+    double userLbs = userWeight * 2.20462 * 0.5;
+    int workOutMin = 0;
+    switch (userWorkOut) {
+      case 0:
+        workOutMin = 10;
+        break;
+      case 1:
+        workOutMin = 20;
+        break;
+      case 2:
+        workOutMin = 40;
+        break;
+      case 3:
+        workOutMin = 60;
+        break;
+      default:
+        workOutMin = 0;
+    }
+
+    userGoal = userLbs + workOutMin / 30 * 12;
+    userGoal = userGoal * 29.5735;
+    print(userGoal);
+
     notifyListeners();
   }
 
@@ -138,6 +168,12 @@ class UserState with ChangeNotifier {
   Future<void> inferAmount() async {
     estimatedWater = await amountModel.inferAmount([userYesterday])[0][0];
     print(estimatedWater);
+    notifyListeners();
+  }
+
+  Future<void> deleteRecord(String id) async {
+    await user.deleteRecord(id);
+    isReLoad = true;
     notifyListeners();
   }
 
