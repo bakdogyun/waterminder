@@ -438,14 +438,14 @@ class _HomeMainState extends State<HomeMain> {
                   Container(
                     alignment: Alignment.bottomCenter,
                     margin: EdgeInsets.all(9.0),
-                    height: 100 * 2.7,
+                    height: 100 * 2.4,
                     width: 150,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.blueAccent, width: 2),
                         borderRadius: BorderRadius.circular(5)),
                     child: AnimatedContainer(
                         duration: Duration(seconds: 1),
-                        height: nowWaterPercent * 2.7,
+                        height: nowWaterPercent * 2.4,
                         width: 150,
                         decoration: BoxDecoration(
                             color: Colors.blueAccent,
