@@ -2,15 +2,12 @@
 
 moressang
 
-## Getting Started
+2023년 경희대학교 산업경영공학과 서비스데이터사이언스 강의에서 제작한 앱입니다.
 
-This project is a starting point for a Flutter application.
+## 주요 기능
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 수분섭취량 기록
+- 수분섭취량 조회
+- 활동량 기반 수분 섭취 목표 계산
+- 섭취기록 기반 예상 섭취량 계산
+- 섭취기록 기반 예상 섭취시간 예측
