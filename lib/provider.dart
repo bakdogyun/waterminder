@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:moressang/api/userData.dart';
@@ -34,7 +35,9 @@ class UserState with ChangeNotifier {
   List userAllRecord = [];
   bool isSet = false;
   double userYesterday = 0.0;
+  List userYesterdayTime = [];
   double estimatedWater = 0.0;
+  List estimatedTime = [];
   late int userWorkOut;
   late int userActivity;
   late int userWeight;
@@ -128,7 +131,10 @@ class UserState with ChangeNotifier {
   }
 
   Future<void> getUserYesterdayRecord() async {
-    userYesterday = await user.getUserYesterdayRecord();
+    var temp = await user.getUserYesterdayRecord();
+    userYesterday = temp[0];
+    userYesterdayTime = temp[1];
+
     notifyListeners();
   }
 
@@ -166,8 +172,17 @@ class UserState with ChangeNotifier {
   }
 
   Future<void> inferAmount() async {
+    await getUserYesterdayRecord();
+    print(userYesterday);
     estimatedWater = await amountModel.inferAmount([userYesterday])[0][0];
     print(estimatedWater);
+    notifyListeners();
+  }
+
+  Future<void> inferTime() async {
+    await getUserYesterdayRecord();
+    estimatedTime = await amountModel.inferTime(userYesterdayTime);
+    print(estimatedTime);
     notifyListeners();
   }
 

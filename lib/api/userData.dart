@@ -17,6 +17,7 @@ class UserData {
   Set userDayWaterTime = {};
   Set userAllData = {};
   Set userYesterday = {};
+  List userYesterdayTime = [List<int>.filled(24, 0)];
   double userYesterdayWater = 0.0;
   bool isSet = false;
 
@@ -105,7 +106,7 @@ class UserData {
     return userWaterRecord;
   }
 
-  Future<double> getUserYesterdayRecord() async {
+  Future<List> getUserYesterdayRecord() async {
     var now = DateTime.now();
     var midNight = now.subtract(Duration(
       hours: now.hour,
@@ -115,10 +116,13 @@ class UserData {
       microseconds: now.microsecond,
     ));
     var yesterday = midNight.subtract(Duration(days: 1));
+    userYesterday = {};
+    userYesterdayWater = 0.0;
+    userYesterdayTime = [List<int>.filled(24, 0)];
     await userRef
         .collection('data')
-        .where('date', isGreaterThan: midNight)
-        .where('date', isLessThan: yesterday)
+        .where('date', isLessThan: midNight)
+        .where('date', isGreaterThan: yesterday)
         .orderBy('date')
         .get()
         .then((QuerySnapshot snapshot) {
@@ -127,13 +131,16 @@ class UserData {
           var data = doc.data() as Map<String, dynamic>;
           if (userWaterTime.contains(data['date'])) {
           } else {
+            var hour = data['date'].toDate().hour;
+            print(hour);
+            userYesterdayTime[0][hour] = 1;
             userYesterday.add(data);
             userYesterdayWater = userYesterdayWater + data['amount'].toDouble();
           }
         },
       );
     });
-    return userYesterdayWater;
+    return [userYesterdayWater, userYesterdayTime];
   }
 
   Future<void> getUserMonthRecord() async {
@@ -170,7 +177,6 @@ class UserData {
             var data = doc.data() as Map<String, dynamic>;
             data['id'] = doc.id;
             userDayWaterRecord.add(data);
-            print(data['date'].toDate());
             userDayWaterTime.add(data['date']);
           },
         );

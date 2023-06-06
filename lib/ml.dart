@@ -1,37 +1,11 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
+import 'dart:math';
 
 class Model {
   final amountModel = 'assets/amount.tflite';
   final timeModel = 'assets/test.tflite';
-  List input = [
-    [1],
-    [0],
-    [0],
-    [0],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-    [0],
-    [1],
-    [1],
-    [0],
-    [1],
-    [1],
-    [0],
-    [1],
-    [0],
-    [1],
-    [1],
-    [1],
-    [1],
-    [1],
-  ];
 
   late Interpreter interpreter;
   Model(String type) {
@@ -40,13 +14,13 @@ class Model {
 
   void _setUp(String type) async {
     if (type == 'amount') {
-      test2();
+      setAmount();
     } else if (type == 'time') {
-      test();
+      setTime();
     }
   }
 
-  void test2() async {
+  void setAmount() async {
     final options = InterpreterOptions();
 
     if (Platform.isAndroid) {
@@ -60,7 +34,7 @@ class Model {
     print('amount model is ready');
   }
 
-  void test() async {
+  void setTime() async {
     final options = InterpreterOptions();
 
     if (Platform.isAndroid) {
@@ -75,10 +49,22 @@ class Model {
   }
 
   List inferTime(List input) {
-    var output = List<double>.filled(24, 0);
-    //interpreter.run(input, output);
+    var output = List<double>.filled(24, 0).reshape([24, 1]);
+    interpreter.run(input, output);
+    List<double> outputEnhanced = [];
+    var timeList = List<int>.filled(24, 0);
+    for (int i = 0; i < 24; i++) {
+      outputEnhanced.add(output[i][0]);
+    }
+    var maxVal = outputEnhanced.reduce(max);
+    for (int i = 0; i < 24; i++) {
+      outputEnhanced[i] = outputEnhanced[i] / maxVal;
+      if (outputEnhanced[i] >= 0.5) {
+        timeList[i] = 1;
+      }
+    }
 
-    return output;
+    return timeList;
   }
 
   List inferAmount(List input) {

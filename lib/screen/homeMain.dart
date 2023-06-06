@@ -34,6 +34,8 @@ class _HomeMainState extends State<HomeMain> {
 
   double nowWaterPercent = 0.0;
   double remainWaterPercent = 100.0;
+
+  int nextTime = 0;
   UserData? userData;
   var _type;
 
@@ -47,15 +49,31 @@ class _HomeMainState extends State<HomeMain> {
 
   List<String> beverageList = ['water', 'coke', 'beer', 'juice'];
 
+  void setTime() async {
+    var timeList = context.read<UserState>().userYesterdayTime;
+    var nowTime = DateTime.now().hour;
+    print('haha');
+    print(timeList[0][nowTime]);
+    bool isSet = true;
+    while (isSet) {
+      if (timeList[0][nowTime] == 1) {
+        nextTime = nowTime;
+      }
+      if (nowTime >= 23) {
+        isSet = false;
+      }
+      nowTime = nowTime + 1;
+    }
+    timeList = [];
+  }
+
   @override
   initState() {
     // TODO: implement initState
     super.initState();
     context.read<UserState>().setUserRecord();
     context.read<WaterState>().getCompanyList();
-    context.read<UserState>().getUserYesterdayRecord();
     context.read<UserState>().inferAmount();
-    time = Model('time');
 
     _type = beverageList.first;
   }
@@ -332,26 +350,34 @@ class _HomeMainState extends State<HomeMain> {
         waterPercent['remain'] = 0;
       }
     });
-    if (nowWater >= goalWater) {
-      NotificationClass.showNotification('축하합니다!', '목표를 달성했습니다!');
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    setTime();
     var todayDay = DateTime.now().day;
     var todayMonth = DateTime.now().month;
     goalWater = context.watch<UserState>().userGoal.roundToDouble();
     nowWater = context.watch<UserState>().currentWater;
     nowWaterPercent = 100 * nowWater / goalWater;
     estimatedWater = context.watch<UserState>().estimatedWater.roundToDouble();
+    var nowTime = DateTime.now().hour;
 
+    if (nowTime == nextTime) {
+      NotificationClass.showNotification('물을 마십시다!', '물을 마실것으로 예상되는 시간입니다');
+    } else {
+      NotificationClass.showNotification(
+          '인공지능을 혼내주세요', '지금 물을 안마실거라고 예상한 인공지능에게 본때를 보여주세요!');
+    }
     if (nowWater <= goalWater) {
       waterPercent['now'] = nowWaterPercent;
       waterPercent['remain'] = 100 - nowWaterPercent;
     } else if (nowWater >= goalWater) {
       waterPercent['now'] = 100;
       waterPercent['remain'] = 0;
+    }
+    if (nowWater >= goalWater) {
+      NotificationClass.showNotification('축하합니다!', '목표를 달성했습니다!');
     }
 
     return Scaffold(
@@ -404,7 +430,10 @@ class _HomeMainState extends State<HomeMain> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
                   SizedBox(
-                    height: 10,
+                    child: Text('예상 다음 수분 섭취 시점 $nextTime시',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
                   Container(
                     alignment: Alignment.bottomCenter,
@@ -457,7 +486,6 @@ class _HomeMainState extends State<HomeMain> {
                             pressTemplateBtn();
                           },
                           child: Text('찾아보기')),
-                      ElevatedButton(onPressed: () {}, child: Text('알람'))
                     ]))
               ],
             )),
