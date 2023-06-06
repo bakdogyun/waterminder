@@ -49,9 +49,19 @@ class _InsightMainState extends State<InsightMain> {
   int nowHour = 0;
   var list;
   Map fiveList = {};
-  List<BarChartGroupData> barList = [];
+  List<BarChartGroupData> barList = [
+    BarChartGroupData(x: 0, barRods: [
+      BarChartRodData(
+          toY: 0,
+          width: 0,
+          backDrawRodData: BackgroundBarChartRodData(
+              show: true, toY: 2000.0, color: Colors.white.withOpacity(0.2)))
+    ])
+  ];
   List allRecord = [];
-  List<PieChartSectionData> pieList = [];
+  List<PieChartSectionData> pieList = [
+    PieChartSectionData(value: 0, showTitle: false)
+  ];
   List<Widget> typeList = [];
 
   @override
@@ -70,11 +80,15 @@ class _InsightMainState extends State<InsightMain> {
       microseconds: now.microsecond,
     ));
     var earlyDay = midNight.subtract(Duration(days: 5));
-    context.read<UserState>().getUserFiveRecord(earlyDay, now);
+    context.read<UserState>().getUserFiveRecord(earlyDay, now).then((value) {
+      fiveList = context.read<UserState>().fiveRecord;
+      print(fiveList);
+      setBarList();
+    });
     context.read<UserState>().getUserAllRecord();
-    fiveList = context.read<UserState>().fiveRecord;
+
     allRecord = context.read<UserState>().userAllRecord;
-    setBarList();
+
     setPieData();
     setSpotList();
   }
@@ -87,7 +101,6 @@ class _InsightMainState extends State<InsightMain> {
     Map drinkList = {};
     allRecord.forEach((element) {
       var type = element['type'];
-      print(type);
       if (drinkList[type] == null) {
         drinkList[type] = element['amount'];
       } else {
@@ -95,6 +108,7 @@ class _InsightMainState extends State<InsightMain> {
       }
     });
     int index = 0;
+    pieList = [];
     drinkList.forEach((type, amount) {
       pieList.add(PieChartSectionData(
           value: amount, showTitle: false, color: colorList[index]));
@@ -110,6 +124,9 @@ class _InsightMainState extends State<InsightMain> {
       ]));
       index++;
     });
+    setState(() {
+      pieList = pieList;
+    });
   }
 
   void setBarList() {
@@ -121,7 +138,9 @@ class _InsightMainState extends State<InsightMain> {
     }
 
     var index = 1;
+    barList = [];
     list.forEach((element) {
+      print(element);
       barList.add(BarChartGroupData(x: index, barRods: [
         BarChartRodData(
             toY: element.toDouble(),
@@ -131,6 +150,11 @@ class _InsightMainState extends State<InsightMain> {
                 show: true, toY: 2000.0, color: Colors.white.withOpacity(0.2)))
       ]));
       index++;
+
+      print(barList);
+    });
+    setState(() {
+      barList = barList;
     });
   }
 
@@ -144,9 +168,13 @@ class _InsightMainState extends State<InsightMain> {
       var time = item['date'];
       DateTime times = time.toDate();
       var hour = times.hour;
+      double hourDouble = hour.toDouble();
       var temp = nowSpotList[hour - 1].y;
       temp = temp + item['amount'];
-      nowSpotList[hour - 1] = FlSpot(hour.toDouble(), temp);
+      nowSpotList[hour - 1] = FlSpot(hourDouble, temp);
+    });
+    setState(() {
+      nowSpotList = nowSpotList;
     });
   }
 
