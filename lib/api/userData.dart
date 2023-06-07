@@ -29,6 +29,7 @@ class UserData {
   }
 
   Future<void> setUserDoc() async {
+    print(userID);
     await userRef.get().then((DocumentSnapshot data) async {
       final datas = data.data();
       if (datas != null) {

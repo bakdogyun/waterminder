@@ -131,6 +131,7 @@ class _InsightMainState extends State<InsightMain> {
   void setBarList() {
     var now = DateTime.now();
     var list = [];
+
     for (var i = 4; i >= 0; i--) {
       print(i);
       var day = now.subtract(Duration(days: i)).day;
@@ -155,20 +156,18 @@ class _InsightMainState extends State<InsightMain> {
   }
 
   void setSpotList() {
-    nowSpotList = [FlSpot(0, 0)];
+    nowSpotList = [];
     for (var i = 0; i < nowHour; i++) {
-      print(i);
       nowSpotList.add(FlSpot(i.toDouble(), 0));
     }
-
     recordList.forEach((item) {
       var time = item['date'];
       DateTime times = time.toDate();
       var hour = times.hour;
       double hourDouble = hour.toDouble();
-      var temp = nowSpotList[hour - 1].y;
+      var temp = nowSpotList[hour].y;
       temp = temp + item['amount'];
-      nowSpotList[hour - 1] = FlSpot(hourDouble, temp);
+      nowSpotList[hour] = FlSpot(hourDouble, temp);
     });
     setState(() {
       nowSpotList = nowSpotList;
