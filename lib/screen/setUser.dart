@@ -120,7 +120,9 @@ class _SetUserState extends State<SetUser> {
                   }
                 });
               },
-              child: Text('제출하기'))
+              child: Text('제출하기')),
+          Text('제출 버튼을 클릭할 시 정보제공 동의하는 것으로 간주합니다',
+              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 11))
         ],
       ),
     );

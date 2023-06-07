@@ -82,7 +82,6 @@ class _InsightMainState extends State<InsightMain> {
     var earlyDay = midNight.subtract(Duration(days: 5));
     context.read<UserState>().getUserFiveRecord(earlyDay, now).then((value) {
       fiveList = context.read<UserState>().fiveRecord;
-      print(fiveList);
       setBarList();
     });
     context.read<UserState>().getUserAllRecord();
@@ -133,14 +132,13 @@ class _InsightMainState extends State<InsightMain> {
     var now = DateTime.now();
     var list = [];
     for (var i = 4; i >= 0; i--) {
+      print(i);
       var day = now.subtract(Duration(days: i)).day;
       list.add(fiveList[day]);
     }
-
     var index = 1;
     barList = [];
     list.forEach((element) {
-      print(element);
       barList.add(BarChartGroupData(x: index, barRods: [
         BarChartRodData(
             toY: element.toDouble(),
@@ -150,8 +148,6 @@ class _InsightMainState extends State<InsightMain> {
                 show: true, toY: 2000.0, color: Colors.white.withOpacity(0.2)))
       ]));
       index++;
-
-      print(barList);
     });
     setState(() {
       barList = barList;
@@ -161,6 +157,7 @@ class _InsightMainState extends State<InsightMain> {
   void setSpotList() {
     nowSpotList = [FlSpot(0, 0)];
     for (var i = 0; i < nowHour; i++) {
+      print(i);
       nowSpotList.add(FlSpot(i.toDouble(), 0));
     }
 
